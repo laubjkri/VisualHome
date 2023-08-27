@@ -1,0 +1,14 @@
+# Angular
+.angular/
+
+# VS
+.vscode/
+.vs/
+
+# Compiled
+dist/
+bin/
+obj/
+
+# Node
+node_modules/

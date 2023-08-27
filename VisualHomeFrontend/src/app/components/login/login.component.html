@@ -1,0 +1,41 @@
+<div class="center-div">
+
+    <div class="current-user-div">
+        <h2 *ngIf="userLoggedIn">Logged in user: {{userName}}</h2>   
+    </div>
+    
+
+    <div class="login-div">
+        <mat-form-field class="username-input">
+            <mat-label>Username</mat-label>
+            <input matInput type="text" [(ngModel)]="user.username">
+        </mat-form-field>
+        <br>
+        <mat-form-field class="password-input">
+            <mat-label>Password</mat-label>
+            <input matInput type="text" [(ngModel)]="user.password" type="password">
+        </mat-form-field>
+        <br>
+    
+        <div class="button-container">
+            <button mat-raised-button class="login-button" (click)="login(user)">Login</button>
+            <button *ngIf="userLoggedIn" mat-raised-button class="logout-button" (click)="logout()">Logout</button>
+        </div>
+    
+        <div class="info-messages-div">         
+            <p *ngIf="showError" class="error">{{errorText}}</p>
+            <p *ngIf="showSucces"class="success">Login Success</p>
+        </div>
+        <div class="button-container">
+            <a routerLink="">
+                <button *ngIf="userLoggedIn" mat-raised-button class="logout-button">To App!</button>
+            </a>
+        </div>
+
+        
+    </div>
+</div>
+
+
+
+

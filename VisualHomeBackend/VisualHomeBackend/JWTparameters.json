@@ -1,0 +1,5 @@
+{  
+  "Key": "This is a very long and very secure key that should be stored in another way",
+  "Issuer": "Me",
+  "Audience": "You guys"  
+}

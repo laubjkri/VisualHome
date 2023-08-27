@@ -1,0 +1,53 @@
+mat-form-field {
+    width: 300px;
+}
+
+.center-div {
+    display: flex;    
+    flex-direction: column;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+}
+
+.current-user-div {
+    height: 75px;    
+    display:flex;    
+    flex-direction: column;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+
+    h2 {
+        margin: 0;
+    }
+}
+
+.button-container{
+    display:flex;
+    gap: 20px;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    height: 50px; /* Adjust this as needed */
+}
+
+button {
+    width: 100px;    
+}
+
+
+.info-messages-div {
+    // margin: auto;
+    display:flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    height: 50px; /* Adjust this as needed */
+}
+
+.error{
+    color: red;
+    font-weight: bold;
+}
+
+.success{
+    color: green;
+    font-weight: bold;
+}

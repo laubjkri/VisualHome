@@ -1,0 +1,12 @@
+mat-card {
+    width: 200px;
+    box-shadow: 100px;
+}
+
+
+.center-div {
+    display: flex;    
+    flex-direction: column;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+}
