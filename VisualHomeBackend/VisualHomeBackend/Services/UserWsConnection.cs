@@ -14,7 +14,7 @@ namespace VisualHomeBackend.Services
     /// </summary>
     public class UserWsConnection
     {
-        public UserModel User { get; private set; }
+        public User User { get; private set; }
         public string ConnectionId { get; }
         public WebSocket WebSocketInstance { get; }
         public bool ConnectionIsActive 
@@ -26,7 +26,7 @@ namespace VisualHomeBackend.Services
             } 
         }
 
-        public UserWsConnection(UserModel user, WebSocket webSocket)
+        public UserWsConnection(User user, WebSocket webSocket)
         {
             ConnectionId = Guid.NewGuid().ToString();            
             WebSocketInstance = webSocket;                     

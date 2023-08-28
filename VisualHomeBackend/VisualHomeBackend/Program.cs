@@ -32,6 +32,7 @@ namespace VisualHomeBackend
             var app = builder.Build();
 
             // Activate the middleware
+            // Impotant to have CORS before other middlewares
             app.UseCors(policy =>
             {
                 policy.AllowAnyHeader();

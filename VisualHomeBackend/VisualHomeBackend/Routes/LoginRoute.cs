@@ -11,14 +11,14 @@ namespace VisualHomeBackend.Routes
     {
         public static void Map(WebApplication app)
         {            
-            app.MapPost("/api/login", async (UserModel user, UsersDbService userService, IConfiguration configuration, UserWsConnectionManagerService userConnectionManagerService) => // ASP.net will convert HTML body json to user
+            app.MapPost("/api/login", async (User user, UsersDbService userService, IConfiguration configuration, UserWsConnectionManagerService userConnectionManagerService) => // ASP.net will convert HTML body json to user
             {
                 if (await userService.CheckUser(user) < 0)
                 {
                     return Results.BadRequest("Invalid credentials");
                 }
 
-                UserModel dbUser = await userService.GetUser(user.Username) ?? throw new Exception("User is null when it should not be");
+                User dbUser = await userService.GetUser(user.Username) ?? throw new Exception("User is null when it should not be");
 
                 var claims = new List<Claim>
                 {

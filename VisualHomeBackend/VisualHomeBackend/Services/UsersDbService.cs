@@ -5,7 +5,7 @@ namespace VisualHomeBackend.Services
 {
     public class UsersDbService
     {
-        private readonly ConcurrentDictionary<string, UserModel> users;
+        private readonly ConcurrentDictionary<string, User> users;
         private bool dbHasBeenRead;
 
         public UsersDbService() 
@@ -19,26 +19,26 @@ namespace VisualHomeBackend.Services
         public void AddUser(string username, string password)
         {
             // TODO: Add functionality to report error if user already exists
-            UserModel newUser = new UserModel();
+            User newUser = new User();
             newUser.Username = username;
             newUser.Password = password;
             users.TryAdd(username, newUser);
         }
 
-        private void UpdateUser(UserModel updatedUser)
+        private void UpdateUser(User updatedUser)
         {
             // TODO: Update user in memory and DB
 
         }
 
-        public async Task<UserModel?> GetUser(string username)
+        public async Task<User?> GetUser(string username)
         {
             if (!dbHasBeenRead)
             {
                 await ReadAllUsersFromDb();                
             }
 
-            UserModel? user;
+            User? user;
             users.TryGetValue(username, out user);
             return user;
         }
@@ -49,9 +49,9 @@ namespace VisualHomeBackend.Services
             dbHasBeenRead = true;
         }
 
-        public async Task<int> CheckUser(UserModel user)
+        public async Task<int> CheckUser(User user)
         {
-            UserModel? dbUser = await GetUser(user.Username);
+            User? dbUser = await GetUser(user.Username);
             if (dbUser == null)
             {
                 return -1; // User not found                
