@@ -36,7 +36,7 @@ namespace VisualHomeBackend.Services
         public async Task ReceiveBytesContinuously()
         {
             string errorMessage = "";
-            TimeSpan timeoutTimeSpan = TimeSpan.FromMilliseconds(User.WebSocketUpdateRateMs * 3);
+            TimeSpan timeoutTimeSpan = TimeSpan.FromMilliseconds(User.RealtimeRateMs * 3);
 
             // For now this is only used for connection timeout
             bool timeout = false;
@@ -76,24 +76,10 @@ namespace VisualHomeBackend.Services
         {
             Random rng = new();
 
-            // Send/receive logic commented out but kept here for furture reference
-            // Below is needed to keep the web connection alive
-            //var buffer = new byte[1024 * 4];
-            //WebSocketReceiveResult result;
-            //do
-            //{               
-
-            //    result = await WebSocketInstance.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-            //    //await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-            //    await SendBytes(Encoding.UTF8.GetBytes(rng.Next(0, 11).ToString()));
-            //    await Task.Delay(User.WebSocketUpdateRateMs);
-            //} while (!result.CloseStatus.HasValue);
-            //await CloseConnection();
-
             do
             {
                 await SendBytes(Encoding.UTF8.GetBytes(rng.Next(0, 11).ToString()));
-                await Task.Delay(User.WebSocketUpdateRateMs);
+                await Task.Delay(User.RealtimeRateMs);
             } while (ConnectionIsActive);
 
             await CloseConnection();

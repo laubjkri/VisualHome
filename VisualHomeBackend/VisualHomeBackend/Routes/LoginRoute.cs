@@ -24,7 +24,7 @@ namespace VisualHomeBackend.Routes
                 {
                     // These claims can be retrieved from the token later                    
                     new Claim("username", dbUser.Username),
-                    new Claim("canEditUsers", dbUser.CanEditUsers == true ? "true" : "false" )
+                    new Claim("isAdmin", dbUser.IsAdmin == true ? "true" : "false" )
                 };
 
                 var expiry = DateTime.Now.AddMinutes(60);

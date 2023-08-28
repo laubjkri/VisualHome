@@ -13,7 +13,7 @@ namespace VisualHomeBackend.Services
             dbHasBeenRead = false;
             users = new();            
             AddUser("admin", "pass"); // TODO: Remove when DB has been implemented
-            users["admin"].CanEditUsers = true;
+            users["admin"].IsAdmin = true;
         }
 
         public void AddUser(string username, string password)
