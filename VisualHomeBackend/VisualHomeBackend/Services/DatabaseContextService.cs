@@ -9,10 +9,8 @@ namespace VisualHomeBackend.Services
     {
         public DbSet<User> Users { get; set; }
 
+        public DatabaseContextService(DbContextOptions<DatabaseContextService> options) : base(options)
+        { }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-        {
-            
-        }
     }
 }

@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using VisualHomeBackend.Routes;
 using VisualHomeBackend.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 namespace VisualHomeBackend
 {
@@ -24,9 +26,15 @@ namespace VisualHomeBackend
             builder.Services.AddAuthorization();
 
             // Configure services            
-            builder.Services.AddSingleton<UserWsConnectionManagerService>();            
+            builder.Services.AddSingleton<UserWsConnectionManagerService>();
+            builder.Services.AddDbContext<DatabaseContextService>(options =>
+            {
+                options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")!);
+            });
             builder.Services.AddSingleton<UsersDbService>();
             builder.Services.AddCors();
+
+
 
 
             var app = builder.Build();
