@@ -1,11 +1,23 @@
 <div class="top-bar-frame">
 
     <div class="fill-empty"></div>
+    <a routerLink="dashboard">
+        <button mat-raised-button class="nav-button">            
+            <mat-icon svgIcon="dashboard"></mat-icon>
+        </button>
+    </a>
+    <a routerLink="users">
+        <button mat-raised-button class="nav-button">            
+            <mat-icon svgIcon="manage_accounts"></mat-icon>
+        </button>
+    </a>
     <a routerLink="/login">        
-        <button mat-raised-button class="login-button">            
+        <button mat-raised-button class="nav-button">            
             <mat-icon svgIcon="key"></mat-icon>
         </button>
     </a>
+
+
     
 
 </div>

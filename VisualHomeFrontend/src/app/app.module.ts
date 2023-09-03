@@ -22,8 +22,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from "@angular/material/button"
 import { MatDividerModule} from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AuthService } from './services/auth.service';
 import { DataProviderService } from './services/data-provider.service';
+import { UsersComponent } from './components/users/users.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +33,8 @@ import { DataProviderService } from './services/data-provider.service';
     LoginComponent,
     DashboardComponent,
     MainComponent,
-    TopBarComponent    
+    TopBarComponent,
+    UsersComponent,    
   ],
   imports: [
     BrowserModule,
@@ -44,7 +47,8 @@ import { DataProviderService } from './services/data-provider.service';
     MatButtonModule,
     MatDividerModule,
     IconsModule,
-    MatCardModule
+    MatCardModule,
+    MatCheckboxModule    
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

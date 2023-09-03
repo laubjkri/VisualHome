@@ -1,4 +1,5 @@
 export class User {
-    username = "";
-    password = "";
+    name: string = "";
+    password: string = "";
+    isAdmin: boolean = false;
 }

@@ -10,13 +10,11 @@ namespace VisualHomeBackend.Services
 {
     public class UserWsConnectionManagerService
     {
-        private readonly ConcurrentDictionary<string, UserWsConnection> _userConnections;
-        private readonly UsersDbService _usersDbService;
+        private readonly ConcurrentDictionary<string, UserWsConnection> _userConnections;        
 
-        public UserWsConnectionManagerService(UsersDbService usersDbService)
+        public UserWsConnectionManagerService()
         {
-            _userConnections = new ConcurrentDictionary<string, UserWsConnection>();
-            _usersDbService = usersDbService;
+            _userConnections = new ConcurrentDictionary<string, UserWsConnection>();            
         }
 
         public void AddConnection(UserWsConnection userWsConnection)

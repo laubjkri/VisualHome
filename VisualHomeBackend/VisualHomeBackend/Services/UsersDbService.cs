@@ -26,7 +26,7 @@ namespace VisualHomeBackend.Services
         {
             try
             {
-                if(!_users.TryAdd(newUser.Username, newUser)) throw new ItemAlreadyExistsException();
+                if(!_users.TryAdd(newUser.Name, newUser)) throw new ItemAlreadyExistsException();
                 _databaseContextService.Users.Add(newUser);
                 _databaseContextService.SaveChanges();
             }
@@ -87,13 +87,19 @@ namespace VisualHomeBackend.Services
 
         private async Task ReadAllUsersFromDb()
         {
-            // TODO: Implement DB
+            foreach (var u in _databaseContextService.Users) 
+            {
+                _users.TryAdd(u.Name, u);
+            }
+
+
+
             _dbHasBeenRead = true;
         }
 
         public async Task<int> CheckUser(User user)
         {
-            User? dbUser = await GetUser(user.Username);
+            User? dbUser = await GetUser(user.Name);
             if (dbUser == null)
             {
                 return -1; // User not found                

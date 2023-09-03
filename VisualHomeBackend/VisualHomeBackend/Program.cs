@@ -25,13 +25,22 @@ namespace VisualHomeBackend
 
             builder.Services.AddAuthorization();
 
-            // Configure services            
+            // Configure services
+            // Services can be added with three lifetime modes:
+            // Transient: New instance every time.
+            // Scoped: One instance per request.
+            // Singleton: One instance for the application lifetime.             
+             
+
             builder.Services.AddSingleton<UserWsConnectionManagerService>();
             builder.Services.AddDbContext<DatabaseContextService>(options =>
             {
+                // This "AddDbContext" handles concurrency as opposed to AddSingleton
+                // It will create a new instance on each request.
+                // This is called the "Unit of Work" pattern and is a "scoped" service.
                 options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")!);
             });
-            builder.Services.AddSingleton<UsersDbService>();
+            builder.Services.AddScoped<UsersDbService>();
             builder.Services.AddCors();
 
 

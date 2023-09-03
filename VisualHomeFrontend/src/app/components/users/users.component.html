@@ -1,0 +1,36 @@
+<div class="center-div">
+    <div class="button-container">
+        <button mat-raised-button class="add-button" (click)="ToggleAddUserButton()">Add User</button>
+        <button mat-raised-button class="remove-button" (click)="ToggleRemoveUserButton()">Remove User</button>
+        <button mat-raised-button class="change-button" (click)="ToggleChangeUserButton()">Change User</button>        
+    </div>
+
+    <div class="forms-container" [ngSwitch]="activeButton">
+
+        <ng-container *ngSwitchCase="ActiveButtonEnum.AddUser">
+
+            <h3>Add User</h3>
+
+            <form class="add-user-form" >
+                <mat-form-field class="username-input">
+                    <mat-label>Username</mat-label>
+                    <input matInput type="text" [(ngModel)]="newUser.name" name="name">
+                </mat-form-field>
+                <br>
+                <mat-form-field class="userpassword-input">
+                    <mat-label>Password</mat-label>
+                    <input matInput type="text" [(ngModel)]="newUser.password" name="password">
+                </mat-form-field>
+                <br>
+                <mat-checkbox [(ngModel)]="newUser.isAdmin" name="isAdmin">Admin</mat-checkbox>
+                <br>
+                <button mat-raised-button class="apply-button">Apply</button>
+            </form>
+
+        </ng-container>
+
+
+    
+    </div>
+
+</div>

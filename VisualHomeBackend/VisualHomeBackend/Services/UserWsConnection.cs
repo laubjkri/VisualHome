@@ -52,12 +52,12 @@ namespace VisualHomeBackend.Services
             }
             catch (Exception ex)
             {
-                errorMessage = $"Websocket connection for user {User.Username} with connection id {ConnectionId} threw this exeption: {ex.Message}!";
+                errorMessage = $"Websocket connection for user {User.Name} with connection id {ConnectionId} threw this exeption: {ex.Message}!";
             }
 
             if (timeout)
             {
-                errorMessage = $"Websocket connection for user {User.Username} with connection id {ConnectionId} timed out!";
+                errorMessage = $"Websocket connection for user {User.Name} with connection id {ConnectionId} timed out!";
             }
             
             Console.WriteLine(errorMessage);
@@ -106,7 +106,7 @@ namespace VisualHomeBackend.Services
                     statusDescription: reason == "" ? "Closed by the WebSocketClientManager no reason provided." : reason,
                     cancellationToken: CancellationToken.None);
 
-                string username = User == null ? "Unknown" : User.Username;
+                string username = User == null ? "Unknown" : User.Name;
                 Console.WriteLine($"Connection id {ConnectionId} disconnected! User: {username}");
             }
         }
