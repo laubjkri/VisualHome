@@ -7,6 +7,7 @@ using VisualHomeBackend.Routes;
 using VisualHomeBackend.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace VisualHomeBackend
 {
@@ -28,28 +29,31 @@ namespace VisualHomeBackend
             // Configure services
             // Services can be added with three lifetime modes:
             // Transient: New instance every time.
-            // Scoped: One instance per request.
-            // Singleton: One instance for the application lifetime.             
-             
+            // Scoped: One instance per http request.
+            // Singleton: One instance for the application lifetime.
+            // AddDbContext is a scoped service.
 
             builder.Services.AddSingleton<UserWsConnectionManagerService>();
-            builder.Services.AddDbContext<DatabaseContextService>(options =>
+            //builder.Services.AddDbContext<UsersDbContext>(options =>
+            //{
+            //    // This "AddDbContext" handles concurrency as opposed to AddSingleton
+            //    // It will create a new instance on each request.
+            //    // This is called the "Unit of Work" pattern and is a "scoped" service.
+            //    options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")!);
+            //});
+            
+            // DB service
+            builder.Services.AddScoped((IServiceProvider provider) =>
             {
-                // This "AddDbContext" handles concurrency as opposed to AddSingleton
-                // It will create a new instance on each request.
-                // This is called the "Unit of Work" pattern and is a "scoped" service.
-                options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")!);
+                return new UsersDbService(builder.Configuration.GetConnectionString("DefaultConnection")!);
             });
-            builder.Services.AddScoped<UsersDbService>();
+
             builder.Services.AddCors();
-
-
-
 
             var app = builder.Build();
 
             // Activate the middleware
-            // Impotant to have CORS before other middlewares
+            // Important to have CORS before other middlewares
             app.UseCors(policy =>
             {
                 policy.AllowAnyHeader();
@@ -68,6 +72,9 @@ namespace VisualHomeBackend
             }); 
             
             RoutesMain.Map(app);
+
+            MqttService mqttService = new MqttService();
+            mqttService.StartAsync();
 
             app.Run();
         }

@@ -15,3 +15,7 @@ node_modules/
 
 # Secrets
 *password*
+timescaledb docker.txt
+
+# DB
+db/

@@ -10,4 +10,4 @@ The final project should have these features
 - User settings
 - Sensor data via MQTT broker
 - Realtime data with visualization
-- Historical data using MYSQL
+- Historical data using PostgreSQL
