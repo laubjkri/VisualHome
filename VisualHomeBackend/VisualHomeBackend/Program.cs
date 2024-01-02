@@ -45,7 +45,7 @@ namespace VisualHomeBackend
             // DB service
             builder.Services.AddScoped((IServiceProvider provider) =>
             {
-                return new UsersDbService(builder.Configuration.GetConnectionString("DefaultConnection")!);
+                return new UsersDbService(builder.Configuration.GetConnectionString("PostgreSql")!);
             });
 
             builder.Services.AddCors();

@@ -7,6 +7,7 @@
             WebSocketRoute.Map(app);
             LoginRoute.Map(app);
             AuthRoute.Map(app);
+            AddUserRoute.Map(app);
         }
     }
 }

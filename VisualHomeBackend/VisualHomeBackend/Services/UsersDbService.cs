@@ -47,8 +47,6 @@ namespace VisualHomeBackend.Services
                     return new ApiResponse() { Success = false, Message = "An unknown result occured." };
             }
         }
-
-
         
 
         private void UpdateUser(User updatedUser)

@@ -2,10 +2,11 @@
 using System.Configuration;
 using VisualHomeBackend.Models;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 using VisualHomeBackend.Types;
 using System.Collections.ObjectModel;
 using System.Collections.Immutable;
+using System.Reflection.Emit;
 
 namespace VisualHomeBackend.Services
 {
@@ -14,7 +15,7 @@ namespace VisualHomeBackend.Services
     /// The DbContext service enables the use of EntityFramwork.
     /// It has a lot of nice features for interacting with a db such as caching to reduce db calls.
     /// This class is composed of the base class instead of inheriting to encapsulate its non-relevant members and exceptions.
-    /// TODO: Find out what happens if connection string is bad.
+    /// TODO: Find out what happens if connection string is bad. Update: asp.net forwards the exception in the http response
     /// </summary>
     public class UsersDbContext
     {
@@ -24,6 +25,7 @@ namespace VisualHomeBackend.Services
         {
             DbContextOptionsBuilder<UsersDbContextInternal> contextOptionsBuilder = new();
             contextOptionsBuilder.UseNpgsql(connectionString);
+            contextOptionsBuilder.UseSnakeCaseNamingConvention(); // Convert from C# naming convention to PostgreSQL made available by EFCore.NamingConventions
             _context = new UsersDbContextInternal(contextOptionsBuilder.Options);
         }
 
@@ -46,12 +48,13 @@ namespace VisualHomeBackend.Services
             catch (DbUpdateException ex)
             {
                 // Error code 1062 indicates a duplicate entry (unique constraint violation) in MySQL.
-                if (ex.InnerException is MySqlException mySqlException && mySqlException.Number == 1062)
-                {
-                    return DbWriteResponse.AlreadyExistsError;                    
-                }
+                //if (ex.InnerException is MySqlException mySqlException && mySqlException.Number == 1062)
+                //{
+                //    return DbWriteResponse.AlreadyExistsError;                    
+                //}
 
-                else return DbWriteResponse.UnknownError;
+                //else 
+                    return DbWriteResponse.UnknownError;
             }
 
             catch (Exception)
@@ -81,10 +84,9 @@ namespace VisualHomeBackend.Services
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                 // The primary key must be defined like this:
-                modelBuilder.Entity<User>().HasKey(u => u.Name);
+                modelBuilder.Entity<User>().HasKey(u => u.Name);                
             }
         }
-
     }
 
     public enum DbWriteResponse
