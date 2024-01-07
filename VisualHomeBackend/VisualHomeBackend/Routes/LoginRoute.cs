@@ -23,10 +23,7 @@ namespace VisualHomeBackend.Routes
                 var claims = new List<Claim>
                 {
                     // These claims can be retrieved from the token later                    
-                    new Claim("name", dbUser.Name),
-                    //new Claim("isAdmin", dbUser.IsAdmin == true ? "true" : "false" ), // We check user object instead
-                    //new Claim(ClaimTypes.Name, dbUser.Username),
-                    //new Claim(ClaimTypes.Role, dbUser.IsAdmin == true ? "admin" : "user"),
+                    new Claim(UserClaims.NameType, dbUser.Name)
                 };
 
                 var expiry = DateTime.Now.AddMinutes(60);

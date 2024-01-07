@@ -55,6 +55,11 @@ namespace VisualHomeBackend.Services
 
         }
 
+        /// <summary>
+        /// Gets user from database. Returns null if not found.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         public async Task<User?> GetUser(string username)
         {
             if (!_dbHasBeenRead)

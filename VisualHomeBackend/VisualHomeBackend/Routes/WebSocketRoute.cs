@@ -33,7 +33,7 @@ namespace VisualHomeBackend.Routes
                         else if (tokenResult == TokenMessageResult.Invalid)
                         {
                             Console.WriteLine("Invalid token format in websocket message.");
-                            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;                            
+                            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                             return;
                         }
 
@@ -84,6 +84,7 @@ namespace VisualHomeBackend.Routes
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error: " + ex.Message);
+                    httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 }
             });
         }
