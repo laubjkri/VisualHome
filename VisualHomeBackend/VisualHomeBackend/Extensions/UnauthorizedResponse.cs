@@ -4,11 +4,11 @@ using System.Text.Json;
 
 namespace VisualHomeBackend.Extensions
 {
-    public class UnauthorizedWithMessage : IResult
+    public class UnauthorizedResponse : IResult
     {
         private readonly string _message;
 
-        public UnauthorizedWithMessage(string message)
+        public UnauthorizedResponse(string message)
         {
             _message = message;
         }
@@ -24,11 +24,11 @@ namespace VisualHomeBackend.Extensions
 
     static partial class ResultsExtensions
     {
-        public static IResult UnauthorizedWithMessage(this IResultExtensions resultExtensions, string message)
+        public static IResult UnauthorizedResponse(this IResultExtensions resultExtensions, string message)
         {
             ArgumentNullException.ThrowIfNull(resultExtensions);
 
-            return new UnauthorizedWithMessage(message);
+            return new UnauthorizedResponse(message);
         }
     }
 

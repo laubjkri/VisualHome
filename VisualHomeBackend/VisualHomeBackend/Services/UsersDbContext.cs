@@ -29,44 +29,50 @@ namespace VisualHomeBackend.Services
             _context = new UsersDbContextInternal(contextOptionsBuilder.Options);
         }
 
-        public async Task<DbWriteResponse> AddUserAsync(User user)
-        {
-            // The responses here are made so that any dependencies to Microsoft.EntityFrameworkCore
-            // are kept within this class
-            _context.Users.Add(user);
-            
-            try
-            {
-                await _context.SaveChangesAsync();
-                return DbWriteResponse.Success;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return DbWriteResponse.ConcurrencyError;
-            }
-
-            catch (DbUpdateException ex)
-            {
-                // Error code 1062 indicates a duplicate entry (unique constraint violation) in MySQL.
-                //if (ex.InnerException is MySqlException mySqlException && mySqlException.Number == 1062)
-                //{
-                //    return DbWriteResponse.AlreadyExistsError;                    
-                //}
-
-                //else 
-                    return DbWriteResponse.UnknownError;
-            }
-
-            catch (Exception)
-            {
-                return DbWriteResponse.UnknownError;
-            }
-        }
-
         public async Task<ReadOnlyCollection<User>> GetAllUsersAsync()
         {
             var users = await _context.Users.ToListAsync();
             return users.AsReadOnly();
+        }
+
+        public async Task CreateUserAsync(User user)
+        {
+            // The responses here are made so that any dependencies to Microsoft.EntityFrameworkCore
+            // are kept within this class
+            _context.Users.Add(user);
+
+            try
+            {
+                await _context.SaveChangesAsync();                
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new DbConcurrencyException();
+            }
+
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+            {
+                throw new DbUpdateException(ex.Message);
+            }
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            _context.Users.Update(user);
+
+            try
+            {
+                await _context.SaveChangesAsync();                
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new DbConcurrencyException();
+            }
+
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+            {
+                throw new DbUpdateException(ex.Message);
+            }
         }
 
 
@@ -89,11 +95,14 @@ namespace VisualHomeBackend.Services
         }
     }
 
-    public enum DbWriteResponse
+    public class DbConcurrencyException : Exception { }
+
+    public class DbUpdateException : Exception         
     {
-        Success,
-        ConcurrencyError,
-        AlreadyExistsError,
-        UnknownError
+        public DbUpdateException(string message) : base(message) { }
     }
+
+
+
+
 }

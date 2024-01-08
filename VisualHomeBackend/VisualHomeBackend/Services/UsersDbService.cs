@@ -23,36 +23,15 @@ namespace VisualHomeBackend.Services
             _users = new();            
         }
 
-        public async Task<ApiResponse> AddUser(User newUser)
+        public async Task CreateUser(User newUser)
         {
+            await _usersDbContext.CreateUserAsync(newUser);
+        }        
 
-            DbWriteResponse response = await _usersDbContext.AddUserAsync(newUser);
-
-            switch (response)
-            {
-                case DbWriteResponse.Success:
-                    _users.TryAdd(newUser.Name, newUser);
-                    return new ApiResponse() { Success = true, Message = "User added." };
-
-                case DbWriteResponse.AlreadyExistsError:
-                    return new ApiResponse() { Success = false, Message = "User already exists." };
-
-                case DbWriteResponse.UnknownError:
-                    return new ApiResponse() { Success = false, Message = "An unknown error occured." };
-
-                case DbWriteResponse.ConcurrencyError:
-                    return new ApiResponse() { Success = false, Message = "Concurrency error occured." };
-
-                default:
-                    return new ApiResponse() { Success = false, Message = "An unknown result occured." };
-            }
-        }
-        
-
-        private void UpdateUser(User updatedUser)
+        private async Task UpdateUser(User updatedUser)
         {
             // TODO: Update user in memory and DB
-
+            await _usersDbContext.UpdateUserAsync(updatedUser);
         }
 
         /// <summary>

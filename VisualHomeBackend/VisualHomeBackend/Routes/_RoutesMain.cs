@@ -1,4 +1,6 @@
-﻿namespace VisualHomeBackend.Routes
+﻿using VisualHomeBackend.Routes.UserRoutes;
+
+namespace VisualHomeBackend.Routes
 {
     public static class RoutesMain
     {
@@ -7,7 +9,7 @@
             WebSocketRoute.Map(app);
             LoginRoute.Map(app);
             AuthRoute.Map(app);
-            AddUserRoute.Map(app);
+            CreateUserRoute.Map(app);
         }
     }
 }
