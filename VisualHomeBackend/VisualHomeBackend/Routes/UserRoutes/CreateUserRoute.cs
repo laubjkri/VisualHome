@@ -10,23 +10,26 @@ namespace VisualHomeBackend.Routes.UserRoutes
     {
         public static void Map(WebApplication app)
         {
-            app.MapPost("/api/createuser", async (HttpContext context, User newUser, UsersDbService userDbService) => // ASP.net will convert HTML body json to user
-            {
-                // Manual check that user is authenticated. Could also be done with .RequireAuthorization();
-                // Requires valid JWT.
-                var authUser = context.User;
-                if (authUser.Identity is null || !authUser.Identity.IsAuthenticated)
-                {
-                    return Results.Unauthorized();
-                }
+            app.MapPost("/api/user/create", async (HttpContext context, User newUser, UsersDbService userDbService) => // ASP.net will convert HTML body json to user
+            {                
 
                 // User should be admin to create users
-                string username = UserClaims.GetNameValue(context.User.Claims);
-                User loggedInUser = await userDbService.GetUser(username) ?? throw new Exception("System error: Logged in user is not found in database.");
+                string? userId = UserClaims.GetValueOfClaimType(context.User.Claims, UserClaims.IdType);
+                if (!Guid.TryParse(userId, out Guid userIdGuid))
+                {
+                    return Results.Extensions.InternalError("Failed to extract user id from request.");
+                }
+
+                User? loggedInUser = await userDbService.GetUser(userIdGuid);
+
+                if (loggedInUser == null)
+                {
+                    return Results.Extensions.InternalError("Current user was not found in database.");
+                }
 
                 if (!loggedInUser.IsAdmin)
                 {                    
-                    return Results.Extensions.UnauthorizedResponse("Currently logged in user is not allowed to create users.");
+                    return Results.Extensions.Unauthorized("Currently logged in user is not allowed to create users.");
                 }
 
                 try
@@ -37,7 +40,7 @@ namespace VisualHomeBackend.Routes.UserRoutes
 
                 catch (DbConcurrencyException ex)
                 {
-                    return Results.Extensions.LockedResponse("Concurrency error in database.");
+                    return Results.Extensions.Locked("Concurrency error in database.");
                 }
 
                 catch (DbUpdateException ex)
@@ -47,10 +50,10 @@ namespace VisualHomeBackend.Routes.UserRoutes
 
                 catch (Exception ex)
                 {
-                    return Results.Extensions.InternalErrorResponse("Internal server error: " + ex.Message);
+                    return Results.Extensions.InternalError("Internal server error: " + ex.Message);
                 }                                
 
-            });
+            }).RequireAuthorization();
         }
     }
 }

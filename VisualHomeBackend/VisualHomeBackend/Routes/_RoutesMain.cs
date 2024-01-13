@@ -10,6 +10,7 @@ namespace VisualHomeBackend.Routes
             LoginRoute.Map(app);
             AuthRoute.Map(app);
             CreateUserRoute.Map(app);
+            UpdateCurrentUserRoute.Map(app);
         }
     }
 }

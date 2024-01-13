@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using VisualHomeBackend.Extensions;
 using VisualHomeBackend.Models;
 using VisualHomeBackend.Services;
 
@@ -13,17 +14,33 @@ namespace VisualHomeBackend.Routes
         {            
             app.MapPost("/api/login", async (User user, UsersDbService userDbService) => // ASP.net will convert HTML body json to user
             {
-                if (await userDbService.CheckUser(user) < 0)
+
+                User? dbUser = null;
+                try
+                {
+                    dbUser = await userDbService.GetUserByName(user.Name);
+                }
+
+                catch (AccessDeniedException)
+                {
+                    return Results.Extensions.InternalError(AccessDeniedException.DefaultMessage);
+                }
+
+                catch (Exception ex) 
+                {                    
+                    return Results.Extensions.InternalError(ex.Message);
+                }
+
+                if (dbUser == null || dbUser.Password != user.Password)
                 {
                     return Results.BadRequest("Invalid credentials");
                 }
 
-                User dbUser = await userDbService.GetUser(user.Name) ?? throw new Exception("User is null when it should not be");
-
                 var claims = new List<Claim>
                 {
                     // These claims can be retrieved from the token later                    
-                    new Claim(UserClaims.NameType, dbUser.Name)
+                    new Claim(UserClaims.NameType, dbUser.Name),
+                    new Claim(UserClaims.IdType, dbUser.Id.ToString())
                 };
 
                 var expiry = DateTime.Now.AddMinutes(60);

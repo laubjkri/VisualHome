@@ -4,18 +4,18 @@ using System.Text.Json;
 
 namespace VisualHomeBackend.Extensions
 {
-    public class InternalErrorResponse : IResult
+    public class Unauthorized : IResult
     {
         private readonly string _message;
 
-        public InternalErrorResponse(string message)
+        public Unauthorized(string message)
         {
             _message = message;
         }
 
         public async Task ExecuteAsync(HttpContext httpContext)
         {
-            httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
             //httpContext.Response.ContentType = "application/json";            
             await httpContext.Response.WriteAsync(_message);
         }
@@ -24,11 +24,11 @@ namespace VisualHomeBackend.Extensions
 
     static partial class ResultsExtensions
     {
-        public static IResult InternalErrorResponse(this IResultExtensions resultExtensions, string message)
+        public static IResult Unauthorized(this IResultExtensions resultExtensions, string message)
         {
             ArgumentNullException.ThrowIfNull(resultExtensions);
 
-            return new InternalErrorResponse(message);
+            return new Unauthorized(message);
         }
     }
 

@@ -41,9 +41,10 @@ namespace VisualHomeBackend
             //    // This is called the "Unit of Work" pattern and is a "scoped" service.
             //    options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")!);
             //});
-            
+
             // DB service
-            builder.Services.AddScoped((IServiceProvider provider) =>
+            // Scoped because entity framework requires it
+            builder.Services.AddScoped((IServiceProvider provider) =>            
             {
                 return new UsersDbService(builder.Configuration.GetConnectionString("PostgreSql")!);
             });

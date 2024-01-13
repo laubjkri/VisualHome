@@ -4,11 +4,11 @@ using System.Text.Json;
 
 namespace VisualHomeBackend.Extensions
 {
-    public class LockedResponse : IResult
+    public class Locked : IResult
     {
         private readonly string _message;
 
-        public LockedResponse(string message)
+        public Locked(string message)
         {
             _message = message;
         }
@@ -24,11 +24,11 @@ namespace VisualHomeBackend.Extensions
 
     static partial class ResultsExtensions
     {
-        public static IResult LockedResponse(this IResultExtensions resultExtensions, string message)
+        public static IResult Locked(this IResultExtensions resultExtensions, string message)
         {
             ArgumentNullException.ThrowIfNull(resultExtensions);
 
-            return new LockedResponse(message);
+            return new Locked(message);
         }
     }
 

@@ -12,7 +12,8 @@ namespace VisualHomeBackend.Services
     /// </summary>
     public class UsersDbService
     {
-        private readonly ConcurrentDictionary<string, User> _users;
+        private readonly ConcurrentDictionary<Guid, User> _usersById;
+        private readonly ConcurrentDictionary<string, User> _usersByName;
         private bool _dbHasBeenRead;
         private UsersDbContext _usersDbContext;
 
@@ -20,34 +21,89 @@ namespace VisualHomeBackend.Services
         {
             _usersDbContext = new UsersDbContext(connectionString);
             _dbHasBeenRead = false;
-            _users = new();            
+            _usersById = new();
+            _usersByName = new();
         }
 
         public async Task CreateUser(User newUser)
         {
-            await _usersDbContext.CreateUserAsync(newUser);
+            await UpdateCacheIfRequired();
+
+            try
+            {
+                _usersById[newUser.Id] = newUser;
+                _usersByName[newUser.Name] = newUser;
+            }
+            catch (Exception)
+            {
+                throw new FailedToUpdateCachedUserException();
+            }
+
+            try
+            {
+                await _usersDbContext.CreateUserAsync(newUser);
+            }
+
+            catch (Exception ex) 
+            {
+                _usersById.TryRemove(newUser.Id, out _);
+                _usersByName.TryRemove(newUser.Name, out _);
+                throw new FailedToUpdateDbException(ex);
+            }            
         }        
 
-        private async Task UpdateUser(User updatedUser)
+        public async Task UpdateUser(User updatedUser)
         {
-            // TODO: Update user in memory and DB
-            await _usersDbContext.UpdateUserAsync(updatedUser);
+            if (updatedUser == null)
+                throw new UserWasNullException();
+
+            await UpdateCacheIfRequired();
+
+            try
+            {
+                _usersById[updatedUser.Id] = updatedUser;
+                _usersByName[updatedUser.Name] = updatedUser;
+            }
+            catch (Exception)
+            {
+                throw new FailedToUpdateCachedUserException();
+            }
+
+            try
+            {
+                await _usersDbContext.UpdateUserAsync(updatedUser);
+            }
+            catch (Exception ex)
+            {
+                _usersById.TryRemove(updatedUser.Id, out _);
+                _usersByName.TryRemove(updatedUser.Name, out _);
+
+                throw new FailedToUpdateDbException(ex);
+            }            
         }
 
         /// <summary>
         /// Gets user from database. Returns null if not found.
         /// </summary>
-        /// <param name="username"></param>
-        /// <returns></returns>
-        public async Task<User?> GetUser(string username)
+        public async Task<User?> GetUser(Guid userId)
         {
-            if (!_dbHasBeenRead)
-            {
-                await ReadAllUsersFromDb();                
-            }
+            await UpdateCacheIfRequired();
 
             User? user;
-            _users.TryGetValue(username, out user);
+            _usersById.TryGetValue(userId, out user);
+            return user;
+        }
+
+        /// <summary>
+        /// Gets user from database. Returns null if not found.
+        /// </summary>
+        public async Task<User?> GetUserByName(string username)
+        {
+            await UpdateCacheIfRequired();
+
+            User? user;
+            _usersByName.TryGetValue(username, out user);
+
             return user;
         }
 
@@ -55,35 +111,33 @@ namespace VisualHomeBackend.Services
         {
             var users = await _usersDbContext.GetAllUsersAsync();
 
+            _usersById.Clear();
+            _usersByName.Clear();
+
             foreach (var u in users) 
             {
-                _users.TryAdd(u.Name, u);
+                _usersById.TryAdd(u.Id, u);
+                _usersByName.TryAdd(u.Name, u);
             }
 
             _dbHasBeenRead = true;
         }
 
-        public async Task<int> CheckUser(User user)
+        private async Task UpdateCacheIfRequired()
         {
-            User? dbUser = await GetUser(user.Name);
-            if (dbUser == null)
+            if (!_dbHasBeenRead)
             {
-                return -1; // User not found                
+                await ReadAllUsersFromDb();
             }
-
-            if (dbUser.Password != user.Password) 
-            {
-                return -2; // Wrong password
-            }
-
-            return 0; // User found and pw ok
         }
-
-
 
     }
 
     public class ItemAlreadyExistsException : Exception { }
+    public class FailedToUpdateCachedUserException : Exception { }
+    public class FailedToUpdateDbException(Exception ex) : Exception("", ex) { }
+    public class UserWasNullException : Exception { }
+    
 
 
 

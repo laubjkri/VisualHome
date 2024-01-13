@@ -7,6 +7,8 @@ using VisualHomeBackend.Types;
 using System.Collections.ObjectModel;
 using System.Collections.Immutable;
 using System.Reflection.Emit;
+using Npgsql;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 namespace VisualHomeBackend.Services
 {
@@ -31,8 +33,21 @@ namespace VisualHomeBackend.Services
 
         public async Task<ReadOnlyCollection<User>> GetAllUsersAsync()
         {
-            var users = await _context.Users.ToListAsync();
-            return users.AsReadOnly();
+            try
+            {
+                var users = await _context.Users.ToListAsync();
+                return users.AsReadOnly();
+            }
+
+            catch (PostgresException ex)
+            {
+                if (ex.SqlState == "42501")
+                {
+                    throw new AccessDeniedException("");
+                }
+
+                throw;
+            }
         }
 
         public async Task CreateUserAsync(User user)
@@ -89,8 +104,8 @@ namespace VisualHomeBackend.Services
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
-                // The primary key must be defined like this:
-                modelBuilder.Entity<User>().HasKey(u => u.Name);                
+                // The primary key must be defined like this (if it is not called id):
+                modelBuilder.Entity<User>().HasKey(u => u.Id);
             }
         }
     }
@@ -100,6 +115,14 @@ namespace VisualHomeBackend.Services
     public class DbUpdateException : Exception         
     {
         public DbUpdateException(string message) : base(message) { }
+    }
+
+    public class AccessDeniedException : Exception
+    {
+        public static string DefaultMessage { get; } = "Access to database was denied.";
+        public AccessDeniedException(string message) : base(message)         
+        {       
+        }
     }
 
 

@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using VisualHomeBackend.Models;
 
 namespace VisualHomeBackend.Routes
 {
@@ -39,25 +40,32 @@ namespace VisualHomeBackend.Routes
 
                         // Validation of token
                         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-                        var claimsPrincipal = jwtSecurityTokenHandler.ValidateToken(token, JwtParameterFetcher.GetTokenValidationParameters(), out _);                        
-                        string? username = claimsPrincipal.Claims.Where((claim) => claim.Type == "username").FirstOrDefault()?.Value;
-                        if (username == null)
+                        var claimsPrincipal = jwtSecurityTokenHandler.ValidateToken(token, JwtParameterFetcher.GetTokenValidationParameters(), out _);
+                        string? userId = UserClaims.GetValueOfClaimType(claimsPrincipal.Claims, UserClaims.IdType);                        
+                        if (userId == null)
                         {
-                            Console.WriteLine($"Claim with username could not be found!");
+                            Console.WriteLine($"User ID could not be extracted from claim!");
                             httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                             return;
                         }
+                        
+                        if (!Guid.TryParse(userId, out Guid userGuid))
+                        {
+                            Console.WriteLine($"User ID has invalid format!");
+                            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                            return;
+                        }                                            
 
-                        Console.WriteLine($"WebSocketRoute: User with name {username} authenticated.");
-
-                        var user = await usersDbService.GetUser(username);
+                        var user = await usersDbService.GetUser(userGuid);
 
                         if (user == null)
-                        {
-                            Console.WriteLine($"User: {username} could not be found in DB!");
+                        {                            
+                            Console.WriteLine($"User: '{userId}' could not be found in DB!");
                             httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                             return;
                         }
+
+                        Console.WriteLine($"WebSocketRoute: User with name {user.Name} authenticated.");
 
                         UserWsConnection userWsConnection = new UserWsConnection(user, webSocket);
                         userConnectionManagerService.AddConnection(userWsConnection);
