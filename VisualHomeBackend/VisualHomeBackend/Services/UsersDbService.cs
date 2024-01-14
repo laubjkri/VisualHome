@@ -52,12 +52,16 @@ namespace VisualHomeBackend.Services
             }            
         }        
 
-        public async Task UpdateUser(User updatedUser)
+        public async Task<User> UpdateUser(User updatedUser)
         {
             if (updatedUser == null)
-                throw new UserWasNullException();
+                throw new UserNullException();
 
             await UpdateCacheIfRequired();
+
+            if (updatedUser.Id is null)
+                throw new IdNullException();
+
 
             try
             {
@@ -66,12 +70,12 @@ namespace VisualHomeBackend.Services
             }
             catch (Exception)
             {
-                throw new FailedToUpdateCachedUserException();
+                throw new FailedToUpdateCachedUserException();                
             }
 
             try
             {
-                await _usersDbContext.UpdateUserAsync(updatedUser);
+                return await _usersDbContext.UpdateUserAsync(updatedUser);
             }
             catch (Exception ex)
             {
@@ -85,7 +89,7 @@ namespace VisualHomeBackend.Services
         /// <summary>
         /// Gets user from database. Returns null if not found.
         /// </summary>
-        public async Task<User?> GetUser(Guid userId)
+        public async Task<User?> GetUserById(Guid userId)
         {
             await UpdateCacheIfRequired();
 
@@ -136,8 +140,10 @@ namespace VisualHomeBackend.Services
     public class ItemAlreadyExistsException : Exception { }
     public class FailedToUpdateCachedUserException : Exception { }
     public class FailedToUpdateDbException(Exception ex) : Exception("", ex) { }
-    public class UserWasNullException : Exception { }
-    
+    public class UserNullException : Exception { }
+    public class IdNullException : Exception { }
+    public class NameNullException : Exception { }
+
 
 
 

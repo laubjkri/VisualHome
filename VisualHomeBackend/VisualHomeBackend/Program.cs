@@ -65,7 +65,7 @@ namespace VisualHomeBackend
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            //app.UseExceptionHandler();
 
             app.UseWebSockets(new WebSocketOptions()
             {

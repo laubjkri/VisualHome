@@ -20,14 +20,14 @@ namespace VisualHomeBackend.Routes.UserRoutes
                     return Results.Extensions.InternalError("Failed to extract user id from request.");
                 }
 
-                User? loggedInUser = await userDbService.GetUser(userIdGuid);
+                User? loggedInUser = await userDbService.GetUserById(userIdGuid);
 
                 if (loggedInUser == null)
                 {
                     return Results.Extensions.InternalError("Current user was not found in database.");
                 }
 
-                if (!loggedInUser.IsAdmin)
+                if (loggedInUser.IsAdmin is null || !(bool)loggedInUser.IsAdmin)
                 {                    
                     return Results.Extensions.Unauthorized("Currently logged in user is not allowed to create users.");
                 }

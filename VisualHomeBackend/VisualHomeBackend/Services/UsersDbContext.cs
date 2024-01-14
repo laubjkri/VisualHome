@@ -9,6 +9,7 @@ using System.Collections.Immutable;
 using System.Reflection.Emit;
 using Npgsql;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace VisualHomeBackend.Services
 {
@@ -28,6 +29,7 @@ namespace VisualHomeBackend.Services
             DbContextOptionsBuilder<UsersDbContextInternal> contextOptionsBuilder = new();
             contextOptionsBuilder.UseNpgsql(connectionString);
             contextOptionsBuilder.UseSnakeCaseNamingConvention(); // Convert from C# naming convention to PostgreSQL made available by EFCore.NamingConventions
+            //contextOptionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // means new objects with the same Id can be used for updating
             _context = new UsersDbContextInternal(contextOptionsBuilder.Options);
         }
 
@@ -54,7 +56,7 @@ namespace VisualHomeBackend.Services
         {
             // The responses here are made so that any dependencies to Microsoft.EntityFrameworkCore
             // are kept within this class
-            _context.Users.Add(user);
+            _context.Users.Add(user);            
 
             try
             {
@@ -71,13 +73,13 @@ namespace VisualHomeBackend.Services
             }
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task<User> UpdateUserAsync(User user)
         {
-            _context.Users.Update(user);
-
-            try
+            try            
             {
-                await _context.SaveChangesAsync();                
+                var updated = _context.Users.Update(user).Entity;                
+                await _context.SaveChangesAsync();
+                return updated;
             }
             catch (DbUpdateConcurrencyException)
             {

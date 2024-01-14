@@ -56,7 +56,7 @@ namespace VisualHomeBackend.Routes
                             return;
                         }                                            
 
-                        var user = await usersDbService.GetUser(userGuid);
+                        var user = await usersDbService.GetUserById(userGuid);
 
                         if (user == null)
                         {                            

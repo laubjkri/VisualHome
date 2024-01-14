@@ -36,7 +36,7 @@ namespace VisualHomeBackend.Services
         public async Task ReceiveBytesContinuously()
         {
             string errorMessage = "";
-            TimeSpan timeoutTimeSpan = TimeSpan.FromMilliseconds(User.RealtimeRateMs * 3);
+            TimeSpan timeoutTimeSpan = TimeSpan.FromMilliseconds(User.RealtimeRateMs ?? 1000 * 3);
 
             // For now this is only used for connection timeout
             bool timeout = false;
@@ -79,7 +79,7 @@ namespace VisualHomeBackend.Services
             do
             {
                 await SendBytes(Encoding.UTF8.GetBytes(rng.Next(0, 11).ToString()));
-                await Task.Delay(User.RealtimeRateMs);
+                await Task.Delay(User.RealtimeRateMs ?? 1000);
             } while (ConnectionIsActive);
 
             await CloseConnection();

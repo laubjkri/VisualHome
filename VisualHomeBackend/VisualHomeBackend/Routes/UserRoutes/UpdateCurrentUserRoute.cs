@@ -12,41 +12,41 @@ namespace VisualHomeBackend.Routes.UserRoutes
     {
         public static void Map(WebApplication app)
         {
-            app.MapPost("/api/user/updatecurrent", async (HttpContext context, UsersDbService userDbService) => // ASP.net will convert HTML body json to user
+            app.MapPost("/api/user/updatecurrent", async (HttpContext context, UsersDbService userDbService) =>
             {
                 // Get details of currently logged in user
                 string? userIdString = UserClaims.GetValueOfClaimType(context.User.Claims, UserClaims.IdType);
-                if (userIdString == null)
-                {
-                    return Results.BadRequest("Failed to extract user from request.");
-                }
+                if (userIdString == null)                
+                    return Results.BadRequest("Failed to extract user from request.");                
 
-                if (!Guid.TryParse(userIdString, out Guid userId))
-                {
-                    return Results.BadRequest("Failed to get user id from request.");
-                }
+                if (!Guid.TryParse(userIdString, out Guid userId))                
+                    return Results.BadRequest("Failed to get user id from request.");               
 
-                // Get the new user
-                string requestBody;
-                using (var reader = new StreamReader(context.Request.Body))
-                {
-                    requestBody = await reader.ReadToEndAsync();
-                }
+                User? updatedUserRequest = await BodyDeserializer.GetObject<User?>(context.Request);
+                if (updatedUserRequest is null)                
+                    return Results.BadRequest("A valid user was not provided with the request.");                
 
-                User? updatedUser = JsonSerializer.Deserialize<User>(requestBody);
+                if (updatedUserRequest.Id is null)
+                    return Results.BadRequest("A user ID must be supplied with the request");
 
-                string? updateUserId = updatedUser?.Id.ToString();
 
-                if (userIdString != updateUserId)
-                {
-                    return Results.BadRequest($"User cannot update other users. (ID: {updateUserId})");
-                }
+                string? updatedUserRequestId = updatedUserRequest.Id.ToString();
+                if (userIdString != updatedUserRequestId)                
+                    return Results.BadRequest($"User cannot update other users. (ID: {updatedUserRequestId})");
+                
 
                 // Try to update user
                 try
                 {
-                    await userDbService.UpdateUser(updatedUser);
-                    return Results.Ok(updatedUser);
+                    // We have to get the current information for the user to support partial updates
+                    User? userInDb = await userDbService.GetUserById(userId);
+                    if (userInDb is null)
+                        return Results.NotFound();
+
+                    userInDb.CopySetProperties(updatedUserRequest);
+
+                    User updated = await userDbService.UpdateUser(userInDb);
+                    return Results.Ok(updated);
                 }
 
                 catch (FailedToUpdateDbException)
