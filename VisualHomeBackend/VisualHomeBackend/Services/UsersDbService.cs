@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
-using VisualHomeBackend.Models;
+using VisualHomeBackend.Models.User;
 using VisualHomeBackend.Types;
 
 namespace VisualHomeBackend.Services
@@ -62,7 +62,7 @@ namespace VisualHomeBackend.Services
             if (updatedUser.Id is null)
                 throw new IdNullException();
 
-
+            // Update cache
             try
             {
                 _usersById[updatedUser.Id] = updatedUser;
@@ -73,6 +73,7 @@ namespace VisualHomeBackend.Services
                 throw new FailedToUpdateCachedUserException();                
             }
 
+            // Update db
             try
             {
                 return await _usersDbContext.UpdateUserAsync(updatedUser);

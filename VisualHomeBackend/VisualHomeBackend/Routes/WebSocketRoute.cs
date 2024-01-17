@@ -3,7 +3,7 @@ using System.Net.WebSockets;
 using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using VisualHomeBackend.Models;
+using VisualHomeBackend.Models.User;
 
 namespace VisualHomeBackend.Routes
 {

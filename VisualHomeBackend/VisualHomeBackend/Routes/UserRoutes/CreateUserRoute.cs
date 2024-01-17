@@ -1,8 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using VisualHomeBackend.Models;
 using VisualHomeBackend.Services;
 using VisualHomeBackend.Extensions;
+using VisualHomeBackend.Models.User;
 
 namespace VisualHomeBackend.Routes.UserRoutes
 {

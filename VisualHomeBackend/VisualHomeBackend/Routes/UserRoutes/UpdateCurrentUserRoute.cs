@@ -1,10 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using VisualHomeBackend.Models;
 using VisualHomeBackend.Services;
 using VisualHomeBackend.Extensions;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using VisualHomeBackend.Models.User;
 
 namespace VisualHomeBackend.Routes.UserRoutes
 {

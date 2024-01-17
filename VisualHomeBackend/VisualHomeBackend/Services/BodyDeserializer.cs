@@ -7,6 +7,7 @@ namespace VisualHomeBackend.Services
     {
         private static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions()
         {
+            // If a member is passed that is not in the type, then we fail the parsing so we know something is wrong.
             UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow             
         };
 

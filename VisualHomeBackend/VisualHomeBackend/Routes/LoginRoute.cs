@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using VisualHomeBackend.Extensions;
-using VisualHomeBackend.Models;
+using VisualHomeBackend.Models.User;
 using VisualHomeBackend.Services;
 
 namespace VisualHomeBackend.Routes

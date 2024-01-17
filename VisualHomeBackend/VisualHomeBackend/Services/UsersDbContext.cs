@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Configuration;
-using VisualHomeBackend.Models;
 using Microsoft.Extensions.Configuration;
 //using MySql.Data.MySqlClient;
 using VisualHomeBackend.Types;
@@ -10,6 +9,7 @@ using System.Reflection.Emit;
 using Npgsql;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using VisualHomeBackend.Models.User;
 
 namespace VisualHomeBackend.Services
 {
@@ -29,7 +29,7 @@ namespace VisualHomeBackend.Services
             DbContextOptionsBuilder<UsersDbContextInternal> contextOptionsBuilder = new();
             contextOptionsBuilder.UseNpgsql(connectionString);
             contextOptionsBuilder.UseSnakeCaseNamingConvention(); // Convert from C# naming convention to PostgreSQL made available by EFCore.NamingConventions
-            //contextOptionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // means new objects with the same Id can be used for updating
+            contextOptionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking); // means new objects with the same Id can be used for updating
             _context = new UsersDbContextInternal(contextOptionsBuilder.Options);
         }
 

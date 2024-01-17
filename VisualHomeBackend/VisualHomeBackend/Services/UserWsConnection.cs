@@ -5,7 +5,7 @@ using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using VisualHomeBackend.Models;
+using VisualHomeBackend.Models.User;
 
 namespace VisualHomeBackend.Services
 {

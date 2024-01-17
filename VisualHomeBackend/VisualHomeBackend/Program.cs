@@ -43,12 +43,18 @@ namespace VisualHomeBackend
             //});
 
             // DB service
-            // Scoped because entity framework requires it
-            builder.Services.AddScoped((IServiceProvider provider) =>            
+            // EF actually recommends running as scoped since the scoped service will access a library running in the background which does some caching
+            // So its not like it is putting extra load on the db to run it as a scoped service.
+            // Since im running my own cache and i make sure to protect my service against concurrency issues i will run it as a singleton.
+            builder.Services.AddSingleton((IServiceProvider provider) =>
             {
                 return new UsersDbService(builder.Configuration.GetConnectionString("PostgreSql")!);
             });
 
+            
+
+
+            // This is required for some reason
             builder.Services.AddCors();
 
             var app = builder.Build();

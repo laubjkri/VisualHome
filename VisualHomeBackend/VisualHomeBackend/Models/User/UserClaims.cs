@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace VisualHomeBackend.Models
+namespace VisualHomeBackend.Models.User
 {
     public static class UserClaims
     {
